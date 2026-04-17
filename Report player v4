@@ -1,0 +1,315 @@
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Name = "PynonGioXenon_Report"
+gui.ResetOnSpawn = false
+
+local Main = Instance.new("Frame", gui)
+Main.Size = UDim2.new(0, 350, 0, 500)
+Main.Position = UDim2.new(0.5, -175, 0.5, -250)
+Main.BackgroundColor3 = Color3.fromRGB(110,0,0)
+Main.BorderSizePixel = 0
+Main.Active = true
+Main.Draggable = true
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,12)
+
+local Top = Instance.new("Frame", Main)
+Top.Size = UDim2.new(1,0,0,40)
+Top.BackgroundColor3 = Color3.fromRGB(180,0,0)
+Top.BorderSizePixel = 0
+Instance.new("UICorner", Top).CornerRadius = UDim.new(0,12)
+
+local Title = Instance.new("TextLabel", Top)
+Title.Size = UDim2.new(1,-90,1,0)
+Title.Position = UDim2.new(0,10,0,0)
+Title.BackgroundTransparency = 1
+Title.Text = "PynonGioXenon | REPORT"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 13
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local BackgroundBukaTutup = Instance.new("Frame", Top)
+BackgroundBukaTutup.Size = UDim2.new(0, 65, 0, 25)
+BackgroundBukaTutup.Position = UDim2.new(1, -70, 0.5, -12.5)
+BackgroundBukaTutup.BackgroundColor3 = Color3.fromRGB(180,0,0)
+BackgroundBukaTutup.BackgroundTransparency = 0
+BackgroundBukaTutup.BorderSizePixel = 0
+Instance.new("UICorner", BackgroundBukaTutup).CornerRadius = UDim.new(0,6)
+
+local BackgroundAI = Instance.new("Frame", BackgroundBukaTutup)
+BackgroundAI.Size = UDim2.new(0, 30, 0, 25)
+BackgroundAI.Position = UDim2.new(0, 0, 0, 0)
+BackgroundAI.BackgroundColor3 = Color3.fromRGB(180,0,0)
+BackgroundAI.BackgroundTransparency = 0
+BackgroundAI.BorderSizePixel = 0
+Instance.new("UICorner", BackgroundAI).CornerRadius = UDim.new(0,6)
+
+local AiBtn = Instance.new("TextButton", BackgroundAI)
+AiBtn.Size = UDim2.new(1, 0, 1, 0)
+AiBtn.Position = UDim2.new(0, 0, 0, 0)
+AiBtn.Text = "AI"
+AiBtn.Font = Enum.Font.GothamBold
+AiBtn.TextSize = 14
+AiBtn.TextColor3 = Color3.new(1,1,1)
+AiBtn.BackgroundColor3 = Color3.fromRGB(180,0,0)
+AiBtn.BackgroundTransparency = 0
+AiBtn.BorderSizePixel = 0
+AiBtn.AutoButtonColor = false
+Instance.new("UICorner", AiBtn).CornerRadius = UDim.new(0,6)
+
+local BackgroundMinimize = Instance.new("Frame", BackgroundBukaTutup)
+BackgroundMinimize.Size = UDim2.new(0, 30, 0, 25)
+BackgroundMinimize.Position = UDim2.new(0, 35, 0, 0)
+BackgroundMinimize.BackgroundColor3 = Color3.fromRGB(180,0,0)
+BackgroundMinimize.BackgroundTransparency = 0
+BackgroundMinimize.BorderSizePixel = 0
+Instance.new("UICorner", BackgroundMinimize).CornerRadius = UDim.new(0,6)
+
+local MinBtn = Instance.new("TextButton", BackgroundMinimize)
+MinBtn.Size = UDim2.new(1, 0, 1, 0)
+MinBtn.Position = UDim2.new(0, 0, 0, 0)
+MinBtn.Text = "-"
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 24
+MinBtn.TextColor3 = Color3.new(1,1,1)
+MinBtn.BackgroundColor3 = Color3.fromRGB(180,0,0)
+MinBtn.BackgroundTransparency = 0
+MinBtn.BorderSizePixel = 0
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0,6)
+
+local ClickSound = Instance.new("Sound", Main)
+ClickSound.SoundId = "rbxassetid://12222216"
+ClickSound.Volume = 0.3
+
+local Scroll = Instance.new("ScrollingFrame", Main)
+Scroll.Position = UDim2.new(0,8,0,50)
+Scroll.Size = UDim2.new(1,-16,1,-70)
+Scroll.CanvasSize = UDim2.new(0,0,0,0)
+Scroll.ScrollBarThickness = 4
+Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
+
+local Layout = Instance.new("UIListLayout", Scroll)
+Layout.Padding = UDim.new(0, 8)
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local function updateCanvasSize()
+    local contentHeight = Layout.AbsoluteContentSize.Y
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, contentHeight + 10)
+end
+
+Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
+task.defer(updateCanvasSize)
+
+local Tooltip = Instance.new("TextLabel", gui)
+Tooltip.Size = UDim2.new(0, 300, 0, 80)
+Tooltip.BackgroundColor3 = Color3.fromRGB(40,0,0)
+Tooltip.TextColor3 = Color3.new(1,1,1)
+Tooltip.Visible = false
+Tooltip.TextWrapped = true
+Tooltip.Font = Enum.Font.Gotham
+Tooltip.TextSize = 11
+Tooltip.ZIndex = 10
+Instance.new("UICorner", Tooltip).CornerRadius = UDim.new(0, 8)
+
+-- FIX: Track mouse position properly
+local mousePos = Vector2.new(0, 0)
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        mousePos = input.Position
+    end
+end)
+
+local function createHeader(text)
+    local header = Instance.new("TextLabel", Scroll)
+    header.Size = UDim2.new(1, -5, 0, 25)
+    header.BackgroundColor3 = Color3.fromRGB(139, 0, 0)
+    header.BackgroundTransparency = 0
+    header.Text = " " .. text .. " "
+    header.TextColor3 = Color3.new(1,1,1)
+    header.Font = Enum.Font.GothamBold
+    header.TextSize = 14
+    header.BorderSizePixel = 0
+    Instance.new("UICorner", header).CornerRadius = UDim.new(0, 6)
+    return header
+end
+
+local function createButton(text)
+    local Frame = Instance.new("Frame", Scroll)
+    Frame.Size = UDim2.new(1, -5, 0, 60)
+    Frame.BackgroundColor3 = Color3.fromRGB(130,0,0)
+    Frame.BorderSizePixel = 0
+    Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 8)
+
+    local Label = Instance.new("TextLabel", Frame)
+    Label.Size = UDim2.new(0.65, 0, 1, 0)
+    Label.Position = UDim2.new(0, 8, 0, 0)
+    Label.BackgroundTransparency = 1
+    Label.Text = text
+    Label.TextColor3 = Color3.new(1,1,1)
+    Label.Font = Enum.Font.Gotham
+    Label.TextSize = 10
+    Label.TextWrapped = true
+    Label.TextXAlignment = Enum.TextXAlignment.Left
+    Label.TextYAlignment = Enum.TextYAlignment.Top
+    Label.TextTruncate = Enum.TextTruncate.AtEnd
+
+    local Copy = Instance.new("TextButton", Frame)
+    Copy.Size = UDim2.new(0, 60, 0, 24)
+    Copy.Position = UDim2.new(1, -70, 0.5, -12)
+    Copy.Text = "Copy"
+    Copy.Font = Enum.Font.GothamBold
+    Copy.TextSize = 11
+    Copy.TextColor3 = Color3.new(1,1,1)
+    Copy.BackgroundColor3 = Color3.fromRGB(200,0,0)
+    Instance.new("UICorner", Copy).CornerRadius = UDim.new(0, 6)
+
+    -- FIX: Use UserInputService instead of deprecated player:GetMouse()
+    Label.MouseEnter:Connect(function()
+        Tooltip.Text = text
+        Tooltip.Position = UDim2.new(0, mousePos.X + 10, 0, mousePos.Y - 40)
+        Tooltip.Visible = true
+    end)
+
+    Label.MouseLeave:Connect(function()
+        Tooltip.Visible = false
+    end)
+
+    Copy.MouseButton1Click:Connect(function()
+        ClickSound:Play()
+        if setclipboard then
+            setclipboard(text)
+            Copy.Text = "✓"
+            task.wait(0.8)
+            Copy.Text = "Copy"
+        end
+    end)
+end
+
+-- [Semua createHeader dan createButton calls tetap sama...]
+createHeader("TOXIC PLAYER")
+createButton("This player is constantly being toxic in the game and creating a very negative environment for everyone in the server. Their behavior includes insulting other players, using offensive language, and intentionally trying to provoke arguments during gameplay. This kind of attitude ruins the experience for other players who are simply trying to enjoy the game peacefully.")
+createButton("Instead of playing fairly and respectfully, this player repeatedly sends rude messages and tries to start conflicts with random players. This behavior clearly violates community rules about respect and sportsmanship.")
+createButton("I am reporting this player so moderators can review their behavior and take appropriate action. A game community should be safe and enjoyable for everyone, and toxic players like this only damage the atmosphere for the rest of the players.")
+createButton("This player has been repeatedly using rude, offensive, and derogatory words directed at other players in the chat, including slurs, profanities, and insults such as 'idiot,' 'loser,' 'f*** you,' and other hateful language that creates a hostile and uncomfortable environment for everyone involved. This behavior violates Roblox's community standards and discourages younger players from enjoying the platform safely. Please review the attached evidence and consider a permanent ban")
+
+createHeader("TOXIC IN CHAT")
+createButton("The subject is actively circumventing the chat filtration system to distribute malicious links and phishing websites. This is a critical security threat that requires immediate account deletion to protect other users. I have observed a consistent pattern of this user attempting to harvest credentials through social engineering in public servers. Requesting an immediate IP-Ban for platform stability.")
+createButton("This user is coordinating with others to target and harass a specific group of players with derogatory language and insults. This organized toxic conduct needs immediate intervention to prevent further harm to the community. This is not a one-time mistake but a persistent pattern of harassment that breaches the Terms of Use regarding respectful communication")
+createButton("This player has been repeatedly using rude, offensive, and derogatory words directed at other players in the chat, including slurs, profanities, and insults such as 'idiot,' 'loser,' 'f*** you,' and other hateful language that creates a hostile and uncomfortable environment for everyone involved. This behavior violates Roblox's community standards and discourages younger players from enjoying the platform safely. Please review the attached evidence and consider a permanent ban")
+
+createHeader("DATING / INAPPROPRIATE")
+createButton("This player appears to be using the game primarily for online dating rather than normal gameplay. They frequently send romantic or inappropriate messages to other players and try to start relationships inside the game environment.")
+createButton("The server is meant for playing and social interaction in a friendly and appropriate way, but this player keeps turning normal conversations into dating conversations which makes other players uncomfortable.")
+createButton("Because of this repeated behavior, I believe this player is misusing the game environment. I am reporting this so moderators can review the chat logs and determine if their actions violate the rules regarding inappropriate behavior or online dating.")
+
+createHeader("CHEATER / EXPLOITER")
+createButton("This player shows strong signs of cheating or exploiting game mechanics in an unfair way. Their gameplay behavior appears unnatural and gives them an advantage that normal players cannot achieve through legitimate gameplay.")
+createButton("Several moments during the match clearly suggested the use of exploits, scripts, or third-party tools that modify the game. This disrupts the fairness of the game and makes the experience frustrating for other players who are playing legitimately.")
+createButton("Fair competition is an important part of any online game, and cheating completely ruins the balance. I am reporting this player so the moderation team can investigate and determine whether they are using unauthorized tools or exploits.")
+
+createHeader("AVATAR ALAY")
+createButton("The avatar used by this player appears inappropriate and may violate the platform's avatar guidelines. The design seems to intentionally resemble or imitate content that could be considered offensive or not suitable for the game environment.")
+createButton("Avatars should remain appropriate and respectful because players of different ages are present in the community. However, this avatar may make other players uncomfortable or create a negative impression within the server.")
+createButton("For that reason, I am submitting this report so moderators can review the avatar and decide whether it violates the avatar rules or community standards.")
+createButton("Zepeto avatar configured with extremely suggestive clothing and body modifications. Not suitable for platform")
+createButton("Using a modified Zepeto-style avatar to simulate inappropriate adult-themed proportions. Direct violation of safety guidelines")
+
+createHeader("PLAYER SUSPICIOUS")
+createButton("This player is behaving in a suspicious way during gameplay. Their actions and movements do not appear normal and may suggest the use of unusual methods or external tools that affect the game.")
+createButton("Other players in the server have also noticed this strange behavior, which includes unusual reaction times and movements that seem impossible under normal gameplay conditions.")
+createButton("I am reporting this player so moderators can review their activity and determine whether they are breaking any rules or using unfair advantages in the game.")
+
+createHeader("AVATAR TITAN")
+createButton("Utilizing an Avatar Titan exploit to enlarge character size, causing server-side lag and disrupting experience. Harassment exploit")
+
+createHeader("SINGLE / INAPPROPRIATE AVATAR")
+createButton("This player is wearing inappropriate and overly revealing clothing that violates Roblox's rules against sexual or adult content. Please review for unsafe and sexualized attire.")
+createButton("This player is wearing extremely revealing pants that expose private areas, which violates Roblox's rules against sexual or adult content. Please review this player for inappropriate and unsafe attire.")
+createButton("This avatar is displaying extremely inappropriate 18+ content with exaggerated adult body features and the appearance of having no clothing. This is clearly sexualized and completely violates Roblox community standards. It creates an unsafe and uncomfortable environment for players and should be removed immediately to protect the platform's safety.")
+createButton("This player is using poses or emotes that appear suggestive or inappropriate. This breaks Roblox's rules. Please review.")
+createButton("This player is using revealing clothing with oversized chest or thigh accessories that create a sexualized appearance. This violates Roblox's rules. Please review.")
+createButton("This player is wearing clothing that mimics nudity using skin-tone colors and transparent textures, violating Roblox's attire rules. Please investigate and take action.")
+createButton("The avatar has accessories positioned to simulate inappropriate body parts, creating a sexualized image. This is against community standards. Review needed.")
+createButton("User is using glitched meshes to make their avatar appear nude or semi-nude, bypassing filters. This poses a risk to minors. Immediate action required.")
+createButton("This player is engaging in suggestive dancing with an avatar designed for adult themes. Violates rules on sexual content. Please ban.")
+createButton("Avatar features exaggerated proportions that are clearly intended to be provocative. This is inappropriate for Roblox. Report for review.")
+createButton("Player is using invisible clothing layers to expose areas, simulating nudity. Clear violation. Please enforce policies.")
+createButton("This user has an avatar with adult-oriented accessories and poses. Creates unsafe environment. Urgent review.")
+createButton("Bypassed clothing showing private areas through textures. Against TOS. Permanent ban recommended.")
+createButton("Player wearing provocative outfits with suggestive prints. Violates decency. Ban.")
+createButton("Avatar simulating explicit acts via positioning. Inappropriate. Investigate.")
+createButton("Using nude skins under clothing layers. Bypass attempt. Action needed.")
+createButton("Exaggerated body mods for sexual appeal. Against rules. Suspend.")
+createButton("Inappropriate avatar in family game. Permanent ban.")
+createButton("Glitched attire exposing parts. Harmful. Review.")
+createButton("Suggestive emotes with revealing clothes. Enforce TOS.")
+createButton("Adult theme avatar harassing others. Ban user.")
+createButton("Nudity mimicry via colors. Urgent action.")
+
+createHeader("DUO / KATA KASAR")
+createButton("The user is engaging in mass harassment by insulting several players in the chat.")
+createButton("This player is engaging in dating behavior, including paired dancing and romantic roleplay, which is not allowed on Roblox. This violates the rules against romantic or sexual content. Please review their behavior.")
+createButton("I am witnessing this user harassing and bullying other players in the server. They are using offensive language and 'anj' to bypass filters while targeting another player. This behavior is creating a toxic environment for everyone. Please review the logs to protect the community.")
+createButton("These players are using duo insults to bully others, calling them names like 'noob' and 'trash' repeatedly. Toxic behavior. Review chat logs.")
+createButton("Pair of users engaging in romantic RP, hugging and kissing emotes. Violates dating rules. Please investigate both.")
+createButton("Harassing duo using bypassed words to insult ethnicity. Creates hostile environment. Urgent action needed.")
+createButton("Players teaming up to spam chat with rude comments and threats. Against harassment policies. Ban both.")
+createButton("Duo involved in verbal abuse, targeting new players with kata kasar. Review for toxicity.")
+createButton("Coordinated bullying by two users, using slang to demean others. Violates community standards.")
+createButton("Romantic duo roleplaying marriage in-game. Not allowed. Please enforce rules.")
+createButton("Insulting pair flooding chat with offensive language. Disruptive. Permanent ban.")
+createButton("Users harassing with personal attacks in duo. Unsafe for kids. Investigate.")
+
+createHeader("SWEARING / OFFENSIVE LANGUAGE")
+createButton("Player spamming inappropriate swear words in chat targeting individuals. Toxic and violates rules. Please ban.")
+createButton("Using offensive language to bully, including slurs. Creates unsafe space. Review chat for evidence.")
+createButton("Repeated profanity directed at group. Against TOS. Immediate action needed.")
+createButton("Insulting with derogatory terms flooding chat. Harmful to kids. Suspend account.")
+createButton("Aggressive swearing in multiple sessions. Pattern of abuse. Permanent ban needed.")
+createButton("Bypassing filters to curse and harass others. Violates community standards. Investigate.")
+createButton("Constant vulgarity ruining game experience. Evidence attached. Ban user.")
+createButton("Offensive slurs against race or gender. Hate speech. Suspend account.")
+createButton("Vulgar threats to players. Hostile. Permanent ban.")
+createButton("Derogatory comments on gender. Discrimination. Action needed.")
+
+createHeader("ZEPETO STYLE")
+createButton("Zepeto avatar configured with extremely suggestive clothing and body modifications. Not suitable for platform.")
+createButton("Using a modified Zepeto-style avatar to simulate inappropriate adult-themed proportions. Direct violation of safety guidelines.")
+createButton("This player is using a Zepeto-style avatar that clearly violates Roblox Community Standards by presenting an overly sexualized appearance, including exaggerated body proportions and revealing clothing that highlights the thighs and chest area.")
+
+createHeader("18+ AVATAR")
+createButton("This player is using an avatar that contains 18+ or adult-themed elements that are not appropriate for Roblox. The avatar appears to include revealing or suggestive details that are not suitable for a platform with many younger users.")
+createButton("This player is using an avatar that clearly violates Roblox Community Standards by exposing excessive parts of the body, especially the thighs and chest area, which is highly inappropriate for a platform widely used by minors.")
+
+createHeader("ONLINE DATING")
+createButton("This user is engaging in online dating behavior and inappropriate interactions that are not allowed on Roblox. They act in ways that simulate personal relationships and communicate in a manner that is not suitable for the game environment.")
+createButton("This user is engaging in online dating behavior and inappropriate interactions that are not allowed on Roblox. Their actions create discomfort for other players and go against platform safety guidelines.")
+
+-- FIX: Complete the minimize/maximize logic
+local minimized = false
+
+MinBtn.MouseButton1Click:Connect(function()
+    ClickSound:Play()
+    minimized = not minimized
+    if minimized then
+        TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 350, 0, 40)}):Play()
+        Scroll.Visible = false
+        MinBtn.Text = "+"  -- Change to plus when minimized
+    else
+        TweenService:Create(Main, TweenInfo.new(0.2), {Size = UDim2.new(0, 350, 0, 500)}):Play()
+        Scroll.Visible = true
+        MinBtn.Text = "-"  -- Change back to minus when expanded
+    end
+end)
+
+-- AI Button functionality (placeholder - you can add your own logic)
+AiBtn.MouseButton1Click:Connect(function()
+    ClickSound:Play()
+    -- Add your AI functionality here
+    print("AI Button clicked")
+end)
